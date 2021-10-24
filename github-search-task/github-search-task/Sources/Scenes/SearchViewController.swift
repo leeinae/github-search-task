@@ -18,8 +18,11 @@ class SearchViewController: UIViewController {
         return bar
     }()
     
-    let tableView: UITableView = {
+    lazy var tableView: UITableView = {
         let table = UITableView()
+        table.dataSource = self
+        table.delegate = self
+        table.register(cellType: SearchResultTableViewCell.self)
         
         return table
     }()
@@ -56,3 +59,17 @@ class SearchViewController: UIViewController {
         }
     }
 }
+
+extension SearchViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        30
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell: SearchResultTableViewCell = tableView.dequeueReuableCell(cell: SearchResultTableViewCell.self, forIndexPath: indexPath)
+        
+        return cell
+    }
+}
+
+extension SearchViewController: UITableViewDelegate {}
