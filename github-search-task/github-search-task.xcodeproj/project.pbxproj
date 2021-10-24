@@ -239,7 +239,6 @@
 				E16555857D56993500ED6D80 /* Pods-github-search-taskTests.debug.xcconfig */,
 				E19A602F4FE840A60CC01123 /* Pods-github-search-taskTests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
