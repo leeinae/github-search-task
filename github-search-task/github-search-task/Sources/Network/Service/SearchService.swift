@@ -6,3 +6,33 @@
 //
 
 import Moya
+
+final class SearchService {
+    static let shared = SearchService()
+    static let provider = MoyaProvider<SearchAPI>()
+
+    private let decoder: JSONDecoder = {
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+
+        return decoder
+    }()
+
+    private init() {}
+
+    func fetchSearchRepositories(query: String, page: Int = 1, completion: @escaping (SearchResult<GithubRepository>) -> Void) {
+        SearchService.provider.request(.getSearchRepositories(query: query, page: page)) { result in
+            switch result { case .success(let response):
+                do {
+                    let json = try self.decoder.decode(SearchResult<GithubRepository>.self, from: response.data)
+
+                    completion(json)
+                } catch {
+                    print("Decode Erorr", error)
+                }
+            case .failure(let error):
+                print("Network Error", error)
+            }
+        }
+    }
+}

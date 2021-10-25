@@ -6,3 +6,7 @@
 //
 
 import Foundation
+
+struct BaseAPI {
+    static let baseURL = "https://api.github.com"
+}

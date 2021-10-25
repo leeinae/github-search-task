@@ -27,16 +27,14 @@ class SearchResultTableViewCell: UITableViewCell {
         stack.spacing = 5
         stack.alignment = .center
 
-        stack.addArrangedSubview(starsLabel)
-        stack.addArrangedSubview(languageLabel)
-        stack.addArrangedSubview(updatedAtDateLabel)
-
         return stack
     }()
 
     var starsLabel: UILabel = {
         let label = UILabel()
+        label.textColor = .gray
         label.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        label.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
 
         return label
     }()
@@ -46,7 +44,7 @@ class SearchResultTableViewCell: UITableViewCell {
         label.font = .systemFont(ofSize: 18, weight: .heavy)
         label.textColor = .white
         label.backgroundColor = .gray
-        label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        label.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
         label.setContentHuggingPriority(.defaultHigh, for: .horizontal)
 
         return label
@@ -54,8 +52,8 @@ class SearchResultTableViewCell: UITableViewCell {
 
     var updatedAtDateLabel: UILabel = {
         let label = UILabel()
+        label.textColor = .gray
         label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-        label.setContentHuggingPriority(.defaultLow, for: .horizontal)
 
         return label
     }()
@@ -65,7 +63,6 @@ class SearchResultTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
-        setCell()
         setConstraints()
     }
 
@@ -78,6 +75,18 @@ class SearchResultTableViewCell: UITableViewCell {
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
+    }
+
+    override func prepareForReuse() {
+        stackView.removeArrangedSubview(starsLabel)
+        stackView.removeArrangedSubview(languageLabel)
+        stackView.removeArrangedSubview(updatedAtDateLabel)
+
+        fullNameLabel.text = ""
+        descriptionLabel.text = ""
+        starsLabel.text = ""
+        languageLabel.text = ""
+        updatedAtDateLabel.text = ""
     }
 
     private func setConstraints() {
@@ -100,11 +109,23 @@ class SearchResultTableViewCell: UITableViewCell {
         }
     }
 
-    func setCell() {
-        fullNameLabel.text = "github/repository"
-        descriptionLabel.text = "repository desc"
-        starsLabel.text = "✩ 13"
-        languageLabel.text = "Swift"
-        updatedAtDateLabel.text = "updated on 20 Sep 2021"
+    func setCell(repository: GithubRepository) {
+        fullNameLabel.text = repository.fullName
+        descriptionLabel.text = repository.itemDescription
+
+        if let star = repository.stargazersCount, star >= 1 {
+            stackView.addArrangedSubview(starsLabel)
+            starsLabel.text = "✩ \(star)"
+        }
+
+        if let lan = repository.language {
+            stackView.addArrangedSubview(languageLabel)
+            languageLabel.text = lan
+        }
+
+        if let updatedAt = repository.updatedAt {
+            stackView.addArrangedSubview(updatedAtDateLabel)
+            updatedAtDateLabel.text = "updated on \(Date().dateToString(format: "d MMM yyyy", date: updatedAt))"
+        }
     }
 }

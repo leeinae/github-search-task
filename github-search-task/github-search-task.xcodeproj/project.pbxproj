@@ -20,6 +20,10 @@
 		AB44EFC2272457A9002579A2 /* SearchService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB44EFC1272457A9002579A2 /* SearchService.swift */; };
 		AB44EFCE272574B9002579A2 /* SearchResultTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB44EFCD272574B9002579A2 /* SearchResultTableViewCell.swift */; };
 		AB44EFD127257C82002579A2 /* UITableView+.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB44EFD027257C82002579A2 /* UITableView+.swift */; };
+		AB44EFD32725C548002579A2 /* SearchAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB44EFD22725C548002579A2 /* SearchAPI.swift */; };
+		AB44EFD62725C7B4002579A2 /* SearchResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB44EFD52725C7B4002579A2 /* SearchResult.swift */; };
+		AB44EFD82725CD79002579A2 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB44EFD72725CD79002579A2 /* Item.swift */; };
+		AB44EFDA2725CD9F002579A2 /* Owner.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB44EFD92725CD9F002579A2 /* Owner.swift */; };
 		DE2DB86A220791C2C6D9CE45 /* Pods_github_search_task.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D872D59F82714EBE96E965B7 /* Pods_github_search_task.framework */; };
 		DF3A4ABF704C88C2C1974AB7 /* Pods_github_search_taskTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91A905FBB1F91BF6E79530F4 /* Pods_github_search_taskTests.framework */; };
 /* End PBXBuildFile section */
@@ -63,6 +67,10 @@
 		AB44EFC1272457A9002579A2 /* SearchService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchService.swift; sourceTree = "<group>"; };
 		AB44EFCD272574B9002579A2 /* SearchResultTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultTableViewCell.swift; sourceTree = "<group>"; };
 		AB44EFD027257C82002579A2 /* UITableView+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableView+.swift"; sourceTree = "<group>"; };
+		AB44EFD22725C548002579A2 /* SearchAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchAPI.swift; sourceTree = "<group>"; };
+		AB44EFD52725C7B4002579A2 /* SearchResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResult.swift; sourceTree = "<group>"; };
+		AB44EFD72725CD79002579A2 /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
+		AB44EFD92725CD9F002579A2 /* Owner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Owner.swift; sourceTree = "<group>"; };
 		CA517822BE3A0FF3C82FAEC9 /* Pods-github-search-task-github-search-taskUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-github-search-task-github-search-taskUITests.release.xcconfig"; path = "Target Support Files/Pods-github-search-task-github-search-taskUITests/Pods-github-search-task-github-search-taskUITests.release.xcconfig"; sourceTree = "<group>"; };
 		D872D59F82714EBE96E965B7 /* Pods_github_search_task.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_github_search_task.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E16555857D56993500ED6D80 /* Pods-github-search-taskTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-github-search-taskTests.debug.xcconfig"; path = "Target Support Files/Pods-github-search-taskTests/Pods-github-search-taskTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -149,6 +157,7 @@
 		AB44EFB127244F4F002579A2 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				AB44EFD42725C7A1002579A2 /* Model */,
 				AB44EFCF27257C67002579A2 /* Extensions */,
 				AB44EFBB2724571A002579A2 /* Network */,
 				AB44EFB8272455FF002579A2 /* Cells */,
@@ -206,6 +215,7 @@
 			isa = PBXGroup;
 			children = (
 				AB44EFBF27245794002579A2 /* BaseAPI.swift */,
+				AB44EFD22725C548002579A2 /* SearchAPI.swift */,
 			);
 			path = API;
 			sourceTree = "<group>";
@@ -231,6 +241,16 @@
 				AB44EFD027257C82002579A2 /* UITableView+.swift */,
 			);
 			path = Extensions;
+			sourceTree = "<group>";
+		};
+		AB44EFD42725C7A1002579A2 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				AB44EFD52725C7B4002579A2 /* SearchResult.swift */,
+				AB44EFD72725CD79002579A2 /* Item.swift */,
+				AB44EFD92725CD9F002579A2 /* Owner.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 		BAA6DC1F9A4EC455B2436811 /* Frameworks */ = {
@@ -494,11 +514,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AB44EFD82725CD79002579A2 /* Item.swift in Sources */,
 				AB44EF8227244118002579A2 /* AppDelegate.swift in Sources */,
+				AB44EFD62725C7B4002579A2 /* SearchResult.swift in Sources */,
 				AB44EFC027245794002579A2 /* BaseAPI.swift in Sources */,
+				AB44EFD32725C548002579A2 /* SearchAPI.swift in Sources */,
 				AB44EFCE272574B9002579A2 /* SearchResultTableViewCell.swift in Sources */,
 				AB44EFD127257C82002579A2 /* UITableView+.swift in Sources */,
 				AB44EFC2272457A9002579A2 /* SearchService.swift in Sources */,
+				AB44EFDA2725CD9F002579A2 /* Owner.swift in Sources */,
 				AB44EFBA27245690002579A2 /* SearchViewController.swift in Sources */,
 				AB44EF8427244118002579A2 /* SceneDelegate.swift in Sources */,
 			);
