@@ -42,8 +42,6 @@ class SearchViewController: UIViewController {
         setView()
         setViewModel()
         setConstraints()
-        
-        repositoryViewModel.fetchSearchRepositoryResults(query: "inae")
     }
     
     // MARK: - Actions
@@ -55,6 +53,8 @@ class SearchViewController: UIViewController {
         
         navigationItem.titleView = searchBar
         navigationController?.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: searchBar)
+        
+        searchBar.delegate = self
     }
     
     private func setViewModel() {
@@ -90,3 +90,11 @@ extension SearchViewController: UITableViewDataSource {
 }
 
 extension SearchViewController: UITableViewDelegate {}
+
+extension SearchViewController: UISearchBarDelegate {
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        guard let keyword = searchBar.text else { return }
+        
+        repositoryViewModel.fetchSearchRepositoryResults(query: keyword)
+    }
+}
