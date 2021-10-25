@@ -29,6 +29,13 @@ class SearchViewController: UIViewController {
         return table
     }()
     
+    lazy var activityIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView()
+        indicator.style = .large
+        
+        return indicator
+    }()
+    
     // MARK: - Properties
     
     let repositoryViewModel = RepositoryViewModel()
@@ -62,13 +69,28 @@ class SearchViewController: UIViewController {
                 self?.tableView.reloadData()
             }
         }
+        
+        repositoryViewModel.isFetching.bind { [weak self] flag in
+            if flag {
+                self?.activityIndicator.isHidden = false
+                self?.activityIndicator.startAnimating()
+            } else {
+                self?.activityIndicator.stopAnimating()
+                self?.activityIndicator.isHidden = true
+            }
+        }
     }
     
     private func setConstraints() {
         view.addSubview(tableView)
+        tableView.addSubview(activityIndicator)
         
         tableView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
+        }
+        
+        activityIndicator.snp.makeConstraints { make in
+            make.center.equalToSuperview()
         }
     }
 }
@@ -95,7 +117,7 @@ extension SearchViewController: UITableViewDelegate {
         guard let keyword = searchBar.text else { return }
         
         if tableView.contentOffset.y > tableView.contentSize.height - tableView.bounds.size.height {
-            if !repositoryViewModel.isFetching, repositoryViewModel.currPage < repositoryViewModel.maxPage {
+            if !repositoryViewModel.isFetching.value, repositoryViewModel.currPage < repositoryViewModel.maxPage {
                 repositoryViewModel.currPage += 1
 
                 repositoryViewModel.fetchSearchRepositoryResults(query: keyword)
