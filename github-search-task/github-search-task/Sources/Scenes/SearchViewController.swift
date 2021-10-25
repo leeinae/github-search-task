@@ -66,7 +66,7 @@ extension SearchViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell: SearchResultTableViewCell = tableView.dequeueReuableCell(cell: SearchResultTableViewCell.self, forIndexPath: indexPath)
+        let cell: SearchResultTableViewCell = tableView.dequeueReusableCell(cell: SearchResultTableViewCell.self, forIndexPath: indexPath)
         
         return cell
     }
