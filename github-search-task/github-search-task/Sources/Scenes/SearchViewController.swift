@@ -30,7 +30,6 @@ class SearchViewController: UIViewController {
     
     // MARK: - Properties
     
-    var results: [GithubRepository] = []
     let repositoryViewModel = RepositoryViewModel()
     
     // MARK: - Initializer
@@ -57,9 +56,7 @@ class SearchViewController: UIViewController {
     }
     
     private func setViewModel() {
-        repositoryViewModel.results.bind { [weak self] results in
-            self?.results = results
-            
+        repositoryViewModel.results.bind { [weak self] _ in
             DispatchQueue.main.async {
                 self?.tableView.reloadData()
             }
@@ -77,12 +74,12 @@ class SearchViewController: UIViewController {
 
 extension SearchViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        results.count
+        repositoryViewModel.results.value.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: SearchResultTableViewCell = tableView.dequeueReusableCell(cell: SearchResultTableViewCell.self, forIndexPath: indexPath)
-        cell.setCell(repository: results[indexPath.row])
+        cell.setCell(repository: repositoryViewModel.results.value[indexPath.row])
         
         return cell
     }
@@ -116,6 +113,10 @@ extension SearchViewController: UITableViewDelegate {
 extension SearchViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         guard let keyword = searchBar.text else { return }
+        
+        repositoryViewModel.results.value = []
+        repositoryViewModel.currPage = 1
+        repositoryViewModel.maxPage = 1
         
         repositoryViewModel.fetchSearchRepositoryResults(query: keyword)
     }
