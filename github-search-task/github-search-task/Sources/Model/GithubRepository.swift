@@ -7,12 +7,12 @@
 
 import Foundation
 
-// MARK: - Item
+// MARK: - GithubRepository
 
-struct Item: Codable {
+struct GithubRepository: Codable {
     let id: Int?
     let nodeID, name, fullName: String?
-    let itemPrivate: Bool?
+    let repositoryPrivate: Bool?
     let owner: Owner?
     let itemDescription: String?
     let url, htmlURL: String?
@@ -24,7 +24,7 @@ struct Item: Codable {
         case id, name, owner, url, size, language
         case nodeID = "node_id"
         case fullName = "full_name"
-        case itemPrivate = "private"
+        case repositoryPrivate = "private"
         case htmlURL = "html_url"
         case itemDescription = "description"
         case createdAt = "created_at"

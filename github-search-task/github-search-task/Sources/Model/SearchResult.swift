@@ -9,10 +9,10 @@ import Foundation
 
 // MARK: - SearchResult
 
-struct SearchResult: Codable {
+struct SearchResult<T: Codable>: Codable {
     let totalCount: Int?
     let incompleteResults: Bool?
-    let items: [Item]?
+    let items: [T]?
 
     enum CodingKeys: String, CodingKey {
         case totalCount = "total_count"
