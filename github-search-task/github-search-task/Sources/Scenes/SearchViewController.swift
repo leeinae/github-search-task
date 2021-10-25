@@ -11,9 +11,10 @@ import UIKit
 class SearchViewController: UIViewController {
     // MARK: - UIComponenets
 
-    let searchBar: UISearchBar = {
+    lazy var searchBar: UISearchBar = {
         let bar = UISearchBar()
         bar.placeholder = "search repository"
+        bar.delegate = self
         
         return bar
     }()
@@ -23,13 +24,13 @@ class SearchViewController: UIViewController {
         table.dataSource = self
         table.delegate = self
         table.register(cellType: SearchResultTableViewCell.self)
+        table.keyboardDismissMode = .onDrag
         
         return table
     }()
     
     // MARK: - Properties
     
-    var results: [GithubRepository] = []
     let repositoryViewModel = RepositoryViewModel()
     
     // MARK: - Initializer
@@ -42,8 +43,6 @@ class SearchViewController: UIViewController {
         setView()
         setViewModel()
         setConstraints()
-        
-        repositoryViewModel.fetchSearchRepositoryResults(query: "inae")
     }
     
     // MARK: - Actions
@@ -58,9 +57,7 @@ class SearchViewController: UIViewController {
     }
     
     private func setViewModel() {
-        repositoryViewModel.results.bind { [weak self] results in
-            self?.results = results
-            
+        repositoryViewModel.results.bind { [weak self] _ in
             DispatchQueue.main.async {
                 self?.tableView.reloadData()
             }
@@ -76,17 +73,59 @@ class SearchViewController: UIViewController {
     }
 }
 
+// MARK: - UITableViewDataSource
+
 extension SearchViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        results.count
+        repositoryViewModel.results.value.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: SearchResultTableViewCell = tableView.dequeueReusableCell(cell: SearchResultTableViewCell.self, forIndexPath: indexPath)
-        cell.setCell(repository: results[indexPath.row])
+        cell.setCell(repository: repositoryViewModel.results.value[indexPath.row])
         
         return cell
     }
 }
 
-extension SearchViewController: UITableViewDelegate {}
+// MARK: - UITableViewDelegate
+
+extension SearchViewController: UITableViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        guard let keyword = searchBar.text else { return }
+        
+        if tableView.contentOffset.y > tableView.contentSize.height - tableView.bounds.size.height {
+            if !repositoryViewModel.isFetching, repositoryViewModel.currPage < repositoryViewModel.maxPage {
+                repositoryViewModel.currPage += 1
+
+                repositoryViewModel.fetchSearchRepositoryResults(query: keyword)
+            }
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if repositoryViewModel.currPage < repositoryViewModel.maxPage {
+            let spinner = UIActivityIndicatorView(style: .large)
+            spinner.startAnimating()
+
+            tableView.tableFooterView = spinner
+        } else {
+            tableView.tableFooterView = nil
+        }
+    }
+}
+
+// MARK: - UISearchBarDelegate
+
+extension SearchViewController: UISearchBarDelegate {
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        guard let keyword = searchBar.text else { return }
+        
+        repositoryViewModel.results.value = []
+        repositoryViewModel.currPage = 1
+        repositoryViewModel.maxPage = 1
+        
+        repositoryViewModel.fetchSearchRepositoryResults(query: keyword)
+        searchBar.resignFirstResponder()
+    }
+}
