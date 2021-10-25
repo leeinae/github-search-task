@@ -12,11 +12,27 @@ class RepositoryViewModel {
 
     var results = Observable([GithubRepository]())
 
+    var currPage = 1
+    var maxPage = 1
+    var pageOffset: Int = 30
+    var isFetching = false
+
+    // MARK: - Methods
+
     func fetchSearchRepositoryResults(query: String) {
-        SearchService.shared.fetchSearchRepositories(query: query, page: 1) { [weak self] response in
+        isFetching = true
+
+        SearchService.shared.fetchSearchRepositories(query: query, page: currPage) { [weak self] response in
             if let results = response.items {
                 self?.results.value.append(contentsOf: results)
             }
+
+            if let totalCount = response.totalCount,
+               let offset = self?.pageOffset
+            {
+                self?.maxPage = (totalCount / offset) + 1
+            }
+            self?.isFetching = false
         }
     }
 }

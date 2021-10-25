@@ -11,9 +11,10 @@ import UIKit
 class SearchViewController: UIViewController {
     // MARK: - UIComponenets
 
-    let searchBar: UISearchBar = {
+    lazy var searchBar: UISearchBar = {
         let bar = UISearchBar()
         bar.placeholder = "search repository"
+        bar.delegate = self
         
         return bar
     }()
@@ -53,8 +54,6 @@ class SearchViewController: UIViewController {
         
         navigationItem.titleView = searchBar
         navigationController?.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: searchBar)
-        
-        searchBar.delegate = self
     }
     
     private func setViewModel() {
@@ -89,7 +88,19 @@ extension SearchViewController: UITableViewDataSource {
     }
 }
 
-extension SearchViewController: UITableViewDelegate {}
+extension SearchViewController: UITableViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        guard let keyword = searchBar.text else { return }
+        
+        if tableView.contentOffset.y > tableView.contentSize.height - tableView.bounds.size.height {
+            if !repositoryViewModel.isFetching, repositoryViewModel.currPage < repositoryViewModel.maxPage {
+                repositoryViewModel.currPage += 1
+
+                repositoryViewModel.fetchSearchRepositoryResults(query: keyword)
+            }
+        }
+    }
+}
 
 extension SearchViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
