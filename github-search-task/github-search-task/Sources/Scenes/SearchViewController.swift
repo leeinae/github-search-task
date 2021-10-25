@@ -29,6 +29,9 @@ class SearchViewController: UIViewController {
     
     // MARK: - Properties
     
+    var results: [GithubRepository] = []
+    let repositoryViewModel = RepositoryViewModel()
+    
     // MARK: - Initializer
     
     // MARK: - LifeCycle
@@ -37,7 +40,10 @@ class SearchViewController: UIViewController {
         super.viewDidLoad()
         
         setView()
+        setViewModel()
         setConstraints()
+        
+        repositoryViewModel.fetchSearchRepositoryResults(query: "inae")
     }
     
     // MARK: - Actions
@@ -51,6 +57,16 @@ class SearchViewController: UIViewController {
         navigationController?.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: searchBar)
     }
     
+    private func setViewModel() {
+        repositoryViewModel.results.bind { [weak self] results in
+            self?.results = results
+            
+            DispatchQueue.main.async {
+                self?.tableView.reloadData()
+            }
+        }
+    }
+    
     private func setConstraints() {
         view.addSubview(tableView)
         
@@ -62,11 +78,12 @@ class SearchViewController: UIViewController {
 
 extension SearchViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        30
+        results.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: SearchResultTableViewCell = tableView.dequeueReusableCell(cell: SearchResultTableViewCell.self, forIndexPath: indexPath)
+        cell.setCell(repository: results[indexPath.row])
         
         return cell
     }
