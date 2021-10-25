@@ -100,6 +100,17 @@ extension SearchViewController: UITableViewDelegate {
             }
         }
     }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if repositoryViewModel.currPage < repositoryViewModel.maxPage {
+            let spinner = UIActivityIndicatorView(style: .large)
+            spinner.startAnimating()
+
+            tableView.tableFooterView = spinner
+        } else {
+            tableView.tableFooterView = nil
+        }
+    }
 }
 
 extension SearchViewController: UISearchBarDelegate {
