@@ -24,6 +24,7 @@ class SearchViewController: UIViewController {
         table.dataSource = self
         table.delegate = self
         table.register(cellType: SearchResultTableViewCell.self)
+        table.keyboardDismissMode = .onDrag
         
         return table
     }()
@@ -72,6 +73,8 @@ class SearchViewController: UIViewController {
     }
 }
 
+// MARK: - UITableViewDataSource
+
 extension SearchViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         repositoryViewModel.results.value.count
@@ -84,6 +87,8 @@ extension SearchViewController: UITableViewDataSource {
         return cell
     }
 }
+
+// MARK: - UITableViewDelegate
 
 extension SearchViewController: UITableViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -110,6 +115,8 @@ extension SearchViewController: UITableViewDelegate {
     }
 }
 
+// MARK: - UISearchBarDelegate
+
 extension SearchViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         guard let keyword = searchBar.text else { return }
@@ -119,5 +126,6 @@ extension SearchViewController: UISearchBarDelegate {
         repositoryViewModel.maxPage = 1
         
         repositoryViewModel.fetchSearchRepositoryResults(query: keyword)
+        searchBar.resignFirstResponder()
     }
 }
