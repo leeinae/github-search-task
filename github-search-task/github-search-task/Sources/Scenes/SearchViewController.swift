@@ -36,9 +36,36 @@ class SearchViewController: UIViewController {
         return indicator
     }()
     
+    lazy var tableLoadingIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView()
+        indicator.style = .large
+        indicator.hidesWhenStopped = true
+        indicator.color = .blue
+        tableView.tableFooterView = indicator
+        
+        return indicator
+    }()
+    
+    lazy var noResultImage: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(systemName: "pencil.slash", withConfiguration: UIImage.SymbolConfiguration(pointSize: 100))
+        imageView.isHidden = true
+        
+        return imageView
+    }()
+    
+    lazy var noResultLabel: UILabel = {
+        let label = UILabel()
+        label.text = "검색 결과가 없습니다."
+        label.isHidden = true
+        
+        return label
+    }()
+    
     // MARK: - Properties
     
     let repositoryViewModel = RepositoryViewModel()
+    var isFirst = true
     
     // MARK: - Initializer
     
@@ -64,33 +91,46 @@ class SearchViewController: UIViewController {
     }
     
     private func setViewModel() {
-        repositoryViewModel.results.bind { [weak self] _ in
+        repositoryViewModel.results.bind { [weak self] searchResult in
             DispatchQueue.main.async {
                 self?.tableView.reloadData()
             }
+            
+            self?.noResultLabel.isHidden = !searchResult.isEmpty
+            self?.noResultImage.isHidden = !searchResult.isEmpty
         }
         
         repositoryViewModel.isFetching.bind { [weak self] flag in
-            if flag {
-                self?.activityIndicator.isHidden = false
-                self?.activityIndicator.startAnimating()
-            } else {
-                self?.activityIndicator.stopAnimating()
-                self?.activityIndicator.isHidden = true
+            self?.activityIndicator.isHidden = !flag
+            
+            flag ? self?.activityIndicator.startAnimating() : self?.activityIndicator.stopAnimating()
+            
+            if let results = self?.repositoryViewModel.results.value, !results.isEmpty {
+                flag ? self?.tableLoadingIndicator.startAnimating() : self?.tableLoadingIndicator.stopAnimating()
             }
         }
     }
     
     private func setConstraints() {
         view.addSubview(tableView)
-        tableView.addSubview(activityIndicator)
+        [activityIndicator, noResultImage, noResultLabel].forEach { tableView.addSubview($0) }
         
         tableView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+            make.top.bottom.equalTo(view.safeAreaLayoutGuide)
+            make.leading.trailing.equalToSuperview()
         }
         
         activityIndicator.snp.makeConstraints { make in
             make.center.equalToSuperview()
+        }
+        
+        noResultImage.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+        }
+        
+        noResultLabel.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalTo(noResultImage.snp.bottom)
         }
     }
 }
@@ -125,16 +165,17 @@ extension SearchViewController: UITableViewDelegate {
         }
     }
     
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if repositoryViewModel.currPage < repositoryViewModel.maxPage {
-            let spinner = UIActivityIndicatorView(style: .large)
-            spinner.startAnimating()
-
-            tableView.tableFooterView = spinner
-        } else {
-            tableView.tableFooterView = nil
-        }
-    }
+//    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+//        if repositoryViewModel.currPage < repositoryViewModel.maxPage {
+//            let spinner = UIActivityIndicatorView(style: .large)
+//            spinner.hidesWhenStopped = true
+//            spinner.startAnimating()
+//
+//            tableView.tableFooterView = spinner
+//        } else {
+//            tableView.tableFooterView = nil
+//        }
+//    }
 }
 
 // MARK: - UISearchBarDelegate
@@ -142,6 +183,7 @@ extension SearchViewController: UITableViewDelegate {
 extension SearchViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         guard let keyword = searchBar.text else { return }
+        isFirst = false
         
         repositoryViewModel.results.value = []
         repositoryViewModel.currPage = 1
