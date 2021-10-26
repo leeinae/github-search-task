@@ -93,10 +93,10 @@ class SearchViewController: UIViewController {
         repositoryViewModel.results.bind { [weak self] searchResult in
             DispatchQueue.main.async {
                 self?.tableView.reloadData()
+                
+                self?.noResultLabel.isHidden = !searchResult.isEmpty
+                self?.noResultImage.isHidden = !searchResult.isEmpty
             }
-            
-            self?.noResultLabel.isHidden = !searchResult.isEmpty
-            self?.noResultImage.isHidden = !searchResult.isEmpty
         }
         
         repositoryViewModel.isFetching.bind { [weak self] flag in
