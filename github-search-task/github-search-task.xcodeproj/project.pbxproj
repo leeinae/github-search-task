@@ -137,7 +137,6 @@
 			isa = PBXGroup;
 			children = (
 				AB44EFB327244F6F002579A2 /* Supporting Files */,
-				AB44EFB227244F60002579A2 /* Resources */,
 				AB44EFB127244F4F002579A2 /* Sources */,
 			);
 			path = "github-search-task";
@@ -172,13 +171,6 @@
 				AB44EFB7272455D8002579A2 /* Scenes */,
 			);
 			path = Sources;
-			sourceTree = "<group>";
-		};
-		AB44EFB227244F60002579A2 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Resources;
 			sourceTree = "<group>";
 		};
 		AB44EFB327244F6F002579A2 /* Supporting Files */ = {

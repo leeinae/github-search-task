@@ -22,7 +22,8 @@ final class SearchService {
 
     func fetchSearchRepositories(query: String, page: Int = 1, completion: @escaping (SearchResult<GithubRepository>) -> Void) {
         SearchService.provider.request(.getSearchRepositories(query: query, page: page)) { result in
-            switch result { case .success(let response):
+            switch result {
+            case .success(let response):
                 do {
                     let json = try self.decoder.decode(SearchResult<GithubRepository>.self, from: response.data)
 

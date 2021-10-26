@@ -29,6 +29,39 @@ class SearchViewController: UIViewController {
         return table
     }()
     
+    lazy var activityIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView()
+        indicator.style = .large
+        
+        return indicator
+    }()
+    
+    lazy var tableLoadingIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView()
+        indicator.style = .large
+        indicator.hidesWhenStopped = true
+        indicator.color = .blue
+        tableView.tableFooterView = indicator
+        
+        return indicator
+    }()
+    
+    lazy var noResultImage: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(systemName: "pencil.slash", withConfiguration: UIImage.SymbolConfiguration(pointSize: 100))
+        imageView.isHidden = true
+        
+        return imageView
+    }()
+    
+    lazy var noResultLabel: UILabel = {
+        let label = UILabel()
+        label.text = "검색 결과가 없습니다."
+        label.isHidden = true
+        
+        return label
+    }()
+    
     // MARK: - Properties
     
     let repositoryViewModel = RepositoryViewModel()
@@ -57,18 +90,46 @@ class SearchViewController: UIViewController {
     }
     
     private func setViewModel() {
-        repositoryViewModel.results.bind { [weak self] _ in
+        repositoryViewModel.results.bind { [weak self] searchResult in
             DispatchQueue.main.async {
                 self?.tableView.reloadData()
+                
+                self?.noResultLabel.isHidden = !searchResult.isEmpty
+                self?.noResultImage.isHidden = !searchResult.isEmpty
+            }
+        }
+        
+        repositoryViewModel.isFetching.bind { [weak self] flag in
+            self?.activityIndicator.isHidden = !flag
+            
+            flag ? self?.activityIndicator.startAnimating() : self?.activityIndicator.stopAnimating()
+            
+            if let results = self?.repositoryViewModel.results.value, !results.isEmpty {
+                flag ? self?.tableLoadingIndicator.startAnimating() : self?.tableLoadingIndicator.stopAnimating()
             }
         }
     }
     
     private func setConstraints() {
         view.addSubview(tableView)
+        [activityIndicator, noResultImage, noResultLabel].forEach { tableView.addSubview($0) }
         
         tableView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+            make.top.bottom.equalTo(view.safeAreaLayoutGuide)
+            make.leading.trailing.equalToSuperview()
+        }
+        
+        activityIndicator.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+        }
+        
+        noResultImage.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+        }
+        
+        noResultLabel.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalTo(noResultImage.snp.bottom)
         }
     }
 }
@@ -95,22 +156,11 @@ extension SearchViewController: UITableViewDelegate {
         guard let keyword = searchBar.text else { return }
         
         if tableView.contentOffset.y > tableView.contentSize.height - tableView.bounds.size.height {
-            if !repositoryViewModel.isFetching, repositoryViewModel.currPage < repositoryViewModel.maxPage {
+            if !repositoryViewModel.isFetching.value, repositoryViewModel.currPage < repositoryViewModel.maxPage {
                 repositoryViewModel.currPage += 1
 
                 repositoryViewModel.fetchSearchRepositoryResults(query: keyword)
             }
-        }
-    }
-    
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if repositoryViewModel.currPage < repositoryViewModel.maxPage {
-            let spinner = UIActivityIndicatorView(style: .large)
-            spinner.startAnimating()
-
-            tableView.tableFooterView = spinner
-        } else {
-            tableView.tableFooterView = nil
         }
     }
 }
