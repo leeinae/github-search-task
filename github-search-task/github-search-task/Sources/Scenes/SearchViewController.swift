@@ -65,7 +65,6 @@ class SearchViewController: UIViewController {
     // MARK: - Properties
     
     let repositoryViewModel = RepositoryViewModel()
-    var isFirst = true
     
     // MARK: - Initializer
     
@@ -164,18 +163,6 @@ extension SearchViewController: UITableViewDelegate {
             }
         }
     }
-    
-//    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-//        if repositoryViewModel.currPage < repositoryViewModel.maxPage {
-//            let spinner = UIActivityIndicatorView(style: .large)
-//            spinner.hidesWhenStopped = true
-//            spinner.startAnimating()
-//
-//            tableView.tableFooterView = spinner
-//        } else {
-//            tableView.tableFooterView = nil
-//        }
-//    }
 }
 
 // MARK: - UISearchBarDelegate
@@ -183,7 +170,6 @@ extension SearchViewController: UITableViewDelegate {
 extension SearchViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         guard let keyword = searchBar.text else { return }
-        isFirst = false
         
         repositoryViewModel.results.value = []
         repositoryViewModel.currPage = 1
